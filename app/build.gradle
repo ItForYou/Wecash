@@ -6,8 +6,8 @@ android {
         applicationId "kr.foryou.wecash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1030
-        versionName "1.10"
+        versionCode 1036
+        versionName "1.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

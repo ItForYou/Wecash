@@ -49,6 +49,7 @@ import util.WebDownLoadListener;
 
 
 public class MainActivity extends AppCompatActivity  {
+
     LinearLayout webLayout;
     RelativeLayout networkLayout;
     public static WebView webView;
@@ -71,8 +72,10 @@ public class MainActivity extends AppCompatActivity  {
     private Uri cameraImageUri;
     public static String no;
     int gpsCount=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         Intent startIntent = new Intent(MainActivity.this,SplashActivity.class);
         startActivity(startIntent);
@@ -80,7 +83,6 @@ public class MainActivity extends AppCompatActivity  {
 
         mContext=this;
         mActivity=this;
-
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.createInstance(this);
@@ -107,17 +109,16 @@ public class MainActivity extends AppCompatActivity  {
 
     //레이아웃 설정
     public void setLayout() {
+
         networkLayout = (RelativeLayout) findViewById(R.id.networkLayout);//네트워크 연결이 끊겼을 때 레이아웃 가져오기
         webLayout = (LinearLayout) findViewById(R.id.webLayout);//웹뷰 레이아웃 가져오기
         loadingProgress = (ProgressBar)findViewById(R.id.loadingProgress);
-
         webView = (WebView) findViewById(R.id.webView);//웹뷰 가져오기
         Log.d("url",firstUrl);
         webViewSetting();
         webView.loadUrl(firstUrl);
         // 웹뷰 다운로드
         webView.setDownloadListener(new WebDownLoadListener(this,this).mDownloadListener);
-
 
     }
     //갤러리 온클릭리스너 만들기
@@ -139,11 +140,12 @@ public class MainActivity extends AppCompatActivity  {
         setting.setDatabaseEnabled(true);//HTML5에서 db 사용여부
         setting.setDomStorageEnabled(true);//HTML5에서 DOM 사용여부
         setting.setCacheMode(WebSettings.LOAD_DEFAULT);//캐시 사용모드 LOAD_NO_CACHE는 캐시를 사용않는다는 뜻
-
         setting.setAppCacheEnabled(true);
         setting.setJavaScriptEnabled(true);//자바스크립트 사용여부
         setting.setSupportMultipleWindows(false);//윈도우 창 여러개를 사용할 것인지의 여부 무조건 false로 하는 게 좋음
+        setting.setJavaScriptCanOpenWindowsAutomatically(true);
         setting.setUseWideViewPort(true);//웹에서 view port 사용여부
+
         webView.setWebChromeClient(chrome);//웹에서 경고창이나 또는 컴펌창을 띄우기 위한 메서드
         webView.setWebViewClient(client);//웹페이지 관련된 메서드 페이지 이동할 때 또는 페이지가 로딩이 끝날 때 주로 쓰임
 
@@ -159,7 +161,6 @@ public class MainActivity extends AppCompatActivity  {
             //부드러운 전환 또한 아직 동작
             setting.setEnableSmoothTransition(true);
         }
-
         //네트워크 체킹을 할 때 쓰임
         netCheck = new NetworkCheck(this, this);
         netCheck.setNetworkLayout(networkLayout);
@@ -178,8 +179,6 @@ public class MainActivity extends AppCompatActivity  {
                 netCheck.networkCheck();
             }
         });
-
-
     }
 
     WebChromeClient chrome;
@@ -188,12 +187,19 @@ public class MainActivity extends AppCompatActivity  {
             //새창 띄우기 여부
             @Override
             public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
-                return false;
+                return true;
             }
+
+            @Override
+            public void onCloseWindow(WebView window){
+                super.onCloseWindow(window);
+            }
+
 
             //경고창 띄우기
             @Override
             public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+                Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_LONG).show();
                 new AlertDialog.Builder(MainActivity.this)
                         .setMessage("\n" + message + "\n")
                         .setPositiveButton("확인",
@@ -301,6 +307,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 Intent i = new Intent(Intent.ACTION_GET_CONTENT);
                 i.addCategory(Intent.CATEGORY_OPENABLE);
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE,true);
                 i.setType("image/*");
 
                 // Create file chooser intent
@@ -373,7 +380,13 @@ public class MainActivity extends AppCompatActivity  {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
                     startActivity(intent);
                     return true;
-                }else if (url.startsWith("intent:")) {
+                }
+                else if(url.contains("sharer.kakao.com")){
+                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(i);
+                    return true;
+                }
+                else if (url.startsWith("intent:")) {
                     loadingProgress.setVisibility(View.GONE);
                     try {
                         Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
@@ -499,10 +512,6 @@ public class MainActivity extends AppCompatActivity  {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.getInstance().stopSync();
         }
-
-
-
-
         execBoolean=false;
     }
 
@@ -548,9 +557,6 @@ public class MainActivity extends AppCompatActivity  {
             intent.putExtra(Intent.EXTRA_TEXT, text);
             Intent chooser = Intent.createChooser(intent, "공유하기");
             startActivity(chooser);
-
-
-
         }
 
         @JavascriptInterface
@@ -576,10 +582,20 @@ public class MainActivity extends AppCompatActivity  {
             Uri[] result = new Uri[0];
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 if(resultCode == RESULT_OK){
-                    result = (data == null) ? new Uri[]{mCapturedImageURI} : WebChromeClient.FileChooserParams.parseResult(resultCode, data);
+                    if(data.getClipData() != null){
+                        int count = data.getClipData().getItemCount();
+                        Uri[] uris = new Uri[count];
+                        for (int i=0; i< count; i++){
+                            uris[i] = data.getClipData().getItemAt(i).getUri();
+                        }
+                        filePathCallbackLollipop.onReceiveValue(uris);
+                    }else if(data.getData()!=null) {
+                        result = (data == null) ? new Uri[]{mCapturedImageURI} : WebChromeClient.FileChooserParams.parseResult(resultCode, data);
+                        filePathCallbackLollipop.onReceiveValue(result);
+                    }
                 }
 
-                filePathCallbackLollipop.onReceiveValue(result);
+
 
             }
         }

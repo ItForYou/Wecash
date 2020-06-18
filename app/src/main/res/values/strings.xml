@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">위캐시</string>
-    <string name="url">http://www.wecashgold.co.kr/?mobile_app=1</string>
-    <string name="domain">http://www.wecashgold.co.kr</string>
-    <string name="register"> http://www.wecashgold.co.kr/bbs/register_form.php?rcmmid=</string>
+    <string name="url">https://www.dreamforone.com/~wecash/?mobile_app=1</string>
+    <string name="domain">https://www.dreamforone.com/~wecash</string>
+    <string name="register"> http://www.dreamforone.com/~wecash/bbs/register_form.php?rcmmid=</string>
 
 </resources>
+
