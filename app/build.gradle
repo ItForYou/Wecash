@@ -6,7 +6,7 @@ android {
         applicationId "kr.foryou.wecash"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 1036
+        versionCode 1037
         versionName "1.12"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

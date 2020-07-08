@@ -44,7 +44,7 @@ import java.lang.reflect.Method;
 import util.BackPressCloseHandler;
 import util.Common;
 import util.LocationPosition;
-import util.NetworkCheck;
+//import util.NetworkCheck;
 import util.WebDownLoadListener;
 
 
@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity  {
     LinearLayout webLayout;
     RelativeLayout networkLayout;
     public static WebView webView;
-    NetworkCheck netCheck;
+//    NetworkCheck netCheck;
     Button replayBtn;
-    ProgressBar loadingProgress;
+//    ProgressBar loadingProgress;
     public static boolean execBoolean = true;
     private BackPressCloseHandler backPressCloseHandler;
     boolean isIndex = true;
@@ -110,9 +110,9 @@ public class MainActivity extends AppCompatActivity  {
     //레이아웃 설정
     public void setLayout() {
 
-        networkLayout = (RelativeLayout) findViewById(R.id.networkLayout);//네트워크 연결이 끊겼을 때 레이아웃 가져오기
+//        networkLayout = (RelativeLayout) findViewById(R.id.networkLayout);//네트워크 연결이 끊겼을 때 레이아웃 가져오기
         webLayout = (LinearLayout) findViewById(R.id.webLayout);//웹뷰 레이아웃 가져오기
-        loadingProgress = (ProgressBar)findViewById(R.id.loadingProgress);
+//        loadingProgress = (ProgressBar)findViewById(R.id.loadingProgress);
         webView = (WebView) findViewById(R.id.webView);//웹뷰 가져오기
         Log.d("url",firstUrl);
         webViewSetting();
@@ -162,23 +162,23 @@ public class MainActivity extends AppCompatActivity  {
             setting.setEnableSmoothTransition(true);
         }
         //네트워크 체킹을 할 때 쓰임
-        netCheck = new NetworkCheck(this, this);
-        netCheck.setNetworkLayout(networkLayout);
-        netCheck.setWebLayout(webLayout);
-        netCheck.networkCheck();
+//        netCheck = new NetworkCheck(this, this);
+//        netCheck.setNetworkLayout(networkLayout);
+//        netCheck.setWebLayout(webLayout);
+//        netCheck.networkCheck();
 
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setAcceptCookie(true);
         //뒤로가기 버튼을 눌렀을 때 클래스로 제어함
         backPressCloseHandler = new BackPressCloseHandler(this);
 
-        replayBtn=(Button)findViewById(R.id.replayBtn);
-        replayBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                netCheck.networkCheck();
-            }
-        });
+//        replayBtn=(Button)findViewById(R.id.replayBtn);
+//        replayBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                netCheck.networkCheck();
+//            }
+//        });
     }
 
     WebChromeClient chrome;
@@ -329,13 +329,13 @@ public class MainActivity extends AppCompatActivity  {
             //페이지 로딩중일 때 (마시멜로) 6.0 이후에는 쓰지 않음
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                loadingProgress.setVisibility(View.VISIBLE);
+//                loadingProgress.setVisibility(View.VISIBLE);
                 Log.d("url",url);
 
                 if (url.startsWith("tel")) {
                     Intent intent = new Intent(Intent.ACTION_DIAL);
                     intent.setData(Uri.parse(url));
-                    loadingProgress.setVisibility(View.GONE);
+//                    loadingProgress.setVisibility(View.GONE);
                     try {
                         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                             // TODO: Consider calling
@@ -357,7 +357,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
                 }else if(url.startsWith("https://open")){
-                    loadingProgress.setVisibility(View.GONE);
+//                    loadingProgress.setVisibility(View.GONE);
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY| Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity  {
                     return true;
                 }else if(url.startsWith("market://")){
                     try {
-                        loadingProgress.setVisibility(View.GONE);
+//                        loadingProgress.setVisibility(View.GONE);
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=kr.foryou.ssum"));
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                         startActivity(intent);
@@ -374,7 +374,7 @@ public class MainActivity extends AppCompatActivity  {
                         e.printStackTrace();
                     }
                 }else if(url.startsWith("http://pf.kakao.com/")){
-                    loadingProgress.setVisibility(View.GONE);
+//                    loadingProgress.setVisibility(View.GONE);
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY| Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity  {
                     return true;
                 }
                 else if (url.startsWith("intent:")) {
-                    loadingProgress.setVisibility(View.GONE);
+//                    loadingProgress.setVisibility(View.GONE);
                     try {
                         Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                         Intent existPackage = getPackageManager().getLaunchIntentForPackage(intent.getPackage());
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity  {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 //webLayout.setRefreshing(false);
-                loadingProgress.setVisibility(View.GONE);
+//                loadingProgress.setVisibility(View.GONE);
                 LocationPosition.act=MainActivity.this;
                 LocationPosition.setPosition( LocationPosition.act);
 
@@ -518,7 +518,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        netCheck.stopReciver();
+//        netCheck.stopReciver();
        // unregisterReceiver(receiver);
 
 
@@ -554,6 +554,23 @@ public class MainActivity extends AppCompatActivity  {
             Intent intent = new Intent(android.content.Intent.ACTION_SEND);
             intent.setType("text/plain");
             String text = getString(R.string.register) + id;
+            intent.putExtra(Intent.EXTRA_TEXT, text);
+            Intent chooser = Intent.createChooser(intent, "공유하기");
+            startActivity(chooser);
+        }
+
+        @JavascriptInterface
+        public void sharewr(int id){
+
+//            Intent sendIntent = new Intent();
+//            sendIntent.setAction(Intent.ACTION_VIEW);
+//            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.register) + id);
+//            sendIntent.setType("text/plain");
+//            startActivity(sendIntent);
+
+            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            String text = getString(R.string.view) + id;
             intent.putExtra(Intent.EXTRA_TEXT, text);
             Intent chooser = Intent.createChooser(intent, "공유하기");
             startActivity(chooser);

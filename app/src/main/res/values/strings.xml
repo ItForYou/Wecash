@@ -3,6 +3,7 @@
     <string name="url">https://www.dreamforone.com/~wecash/?mobile_app=1</string>
     <string name="domain">https://www.dreamforone.com/~wecash</string>
     <string name="register"> http://www.dreamforone.com/~wecash/bbs/register_form.php?rcmmid=</string>
+    <string name="view">http://www.dreamforone.com/~wecash/bbs/board.php?bo_table=business&amp;wr_id=</string>
 
 </resources>
 
